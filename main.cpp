@@ -40,7 +40,7 @@ for(int i = 0; i < qnt; i++){
     }
     Leitor_aritmetico expressao(tamanho);
     for(int j = 0; j <= exp.length() + 1; j++){
-        if(exp[j] != ' ' && j <= exp.length()){
+        if(exp[j] != ' ' && j < exp.length()){
             base += exp[j];
         }
         else{
@@ -50,7 +50,7 @@ for(int i = 0; i < qnt; i++){
     }
     string resultado;
     try{
-        resultados[i] = expressao.exp(0, 0);
+        resultados[i] = expressao.exp(0);
         
     }
     catch(Error& output){

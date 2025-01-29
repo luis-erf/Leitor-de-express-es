@@ -55,74 +55,56 @@ bool Leitor_aritmetico :: append(string termo){
 // Função responsável por analisar os tokens
 
 void Leitor_aritmetico :: read_next_token(){
-    if(arrPtr[token].length() > 1){
-        if(arrPtr[token][0] == '-'){
-            if(token < cnt - 1){
-                token++;
-            }
-        }
+    if(token + 1 <= cnt){
+        token++;
     }
-    while(isdigit(arrPtr[token][0]) || (arrPtr[token] == "true") || (arrPtr[token] == "false")){
-        if(token < cnt - 1){
-            token++;
-        }
-        else{
-            break;
-        }
-    }
-
 }
 
 // Funções realacionadas ao funcionamento do algoritmo
 
-string Leitor_aritmetico :: exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: exp(int current_token_pos){
     token = current_token_pos;
-    read_next_token();
-    exp_term = current_exp_pos;
-    return or_exp(current_token_pos, current_exp_pos);
+    return or_exp();
 }
 
-string Leitor_aritmetico :: or_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: or_exp(){
     string e1;
-    e1 = and_exp(current_token_pos, current_exp_pos);
+    e1 = and_exp();
     while(arrPtr[token] == "||"){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = and_exp(current_token_pos, current_exp_pos);
+        e2 = and_exp();
         string retorno;
-        retorno = or_op(e1, op, e2);
+        retorno = or_op(e1, e2);
         e1 = retorno;
     }
     return e1;
 };
 
-string Leitor_aritmetico :: and_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: and_exp(){
     string e1;
-    e1 = eq_exp(current_token_pos, current_exp_pos);
+    e1 = eq_exp();
     while(arrPtr[token] == "&&"){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = eq_exp(current_token_pos, current_exp_pos);
+        e2 = eq_exp();
         string retorno;
-        retorno = and_op(e1, op, e2);
+        retorno = and_op(e1, e2);
         e1 = retorno;
     }
     return e1;
 };
 
-string Leitor_aritmetico :: eq_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: eq_exp(){
     string e1;
-    e1 = rel_exp(current_token_pos, current_exp_pos);
+    e1 = rel_exp();
     while(arrPtr[token] == "==" || arrPtr[token] == "!="){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = rel_exp(current_token_pos, current_exp_pos);
+        e2 = rel_exp();
         string retorno;
         retorno = eq_op(e1, op, e2);
         e1 = retorno;
@@ -130,15 +112,14 @@ string Leitor_aritmetico :: eq_exp(int current_token_pos, int current_exp_pos){
     return e1;
 };
 
-string Leitor_aritmetico :: rel_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: rel_exp(){
     string e1;
-    e1 = add_exp(current_token_pos, current_exp_pos);
+    e1 = add_exp();
     while(arrPtr[token] == "<" || arrPtr[token] == ">" || arrPtr[token] == "<=" || arrPtr[token] == ">="){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = add_exp(current_token_pos, current_exp_pos);
+        e2 = add_exp();
         string retorno;
         retorno = rel_op(e1, op, e2);
         e1 = retorno;
@@ -146,15 +127,14 @@ string Leitor_aritmetico :: rel_exp(int current_token_pos, int current_exp_pos){
     return e1;
 };
 
-string Leitor_aritmetico :: add_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: add_exp(){
     string e1;
-    e1 = mul_exp(current_token_pos, current_exp_pos);
+    e1 = mul_exp();
     while(arrPtr[token] == "+" || arrPtr[token] == "-"){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = mul_exp(current_token_pos, current_exp_pos);
+        e2 = mul_exp();
         string retorno;
         retorno = add_op(e1, op, e2);
         e1 = retorno;
@@ -162,15 +142,14 @@ string Leitor_aritmetico :: add_exp(int current_token_pos, int current_exp_pos){
     return e1;
 };
 
-string Leitor_aritmetico :: mul_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: mul_exp(){
     string e1;
-    e1 = unary_exp(current_token_pos, current_exp_pos);
+    e1 = unary_exp();
     while(arrPtr[token] == "*" || arrPtr[token] == "/"){
         string op = arrPtr[token];
-        token++;
         read_next_token();
         string e2;
-        e2 = unary_exp(current_token_pos, current_exp_pos);
+        e2 = unary_exp();
         string retorno;
         retorno = mul_op(e1, op, e2);
         e1 = retorno;
@@ -178,73 +157,64 @@ string Leitor_aritmetico :: mul_exp(int current_token_pos, int current_exp_pos){
     return e1;
 };
 
-string Leitor_aritmetico :: unary_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: unary_exp(){
     string e1;
-    if(arrPtr[token] == "-" && !isdigit(arrPtr[token - 1][0])){
-        while(arrPtr[token] == "-" && !isdigit(arrPtr[token - 1][0])){
+    if(arrPtr[token] == "-"){
+        while(arrPtr[token] == "-"){
             string op = arrPtr[token];
-            token++;
             read_next_token();
-            e1 = primary_exp(current_token_pos, current_exp_pos);
+            e1 = primary_exp();
             string retorno;
-            retorno = unary_op(e1, op);
+            retorno = unary_op(e1);
             e1 = retorno;
         }
     }
     else{
-        e1 = primary_exp(current_token_pos, current_exp_pos);
+        e1 = primary_exp();
     }
     return e1;
     
 };
 
-string Leitor_aritmetico :: primary_exp(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: primary_exp(){
     string e1;
     if(arrPtr[token] == "("){
         while(arrPtr[token][0] != ')'){
             token++;
-            e1 = exp(token, exp_term);
+            e1 = exp(token);
         }
-        if(token + 1 < cnt){
-            token++;
-            read_next_token();
-        }
+        read_next_token();
     }
     else{
-        e1 = literal(current_token_pos, current_exp_pos);
+        e1 = literal();
     }
     return e1;
 };
 
-string Leitor_aritmetico :: literal(int current_token_pos, int current_exp_pos){
+string Leitor_aritmetico :: literal(){
     string literal;
-    while(!isdigit(arrPtr[exp_term][0])){
-        if(arrPtr[exp_term].length() > 1 && arrPtr[exp_term][0] == '-'){
-            literal = arrPtr[exp_term];
-            exp_term++;
-            return literal;
-        }
-        else if((arrPtr[exp_term][0] == 't') || (arrPtr[exp_term][0] == 'f')){
-            literal = arrPtr[exp_term];
-            exp_term++;
-            return literal;
-        }
-        else{
-            exp_term++;
-        }
-    }
-    literal = arrPtr[exp_term];
-    exp_term++;
+    literal = arrPtr[token];
+    read_next_token();
     return literal;
 };
 
 // Funções das operações
-string Leitor_aritmetico :: or_op(const string& e1, const string& op, const string& e2){
-    if(isdigit(e1[0]) || isdigit(e2[0])){
+string Leitor_aritmetico :: or_op(const string& e1, const string& e2){
+    bool e1_neg = false;
+    bool e2_neg = false;
+    if(e1[0] == '-' || e2[0] == '-'){
+        if(e1[0] == '-'){
+            e1_neg = true;
+        }
+        if(e2[0] == '-'){
+            e2_neg = true;
+        }
+    }
+    if(e1_neg || e2_neg || isdigit(e1[0]) || isdigit(e2[0])){
         throw Error("error");
     }
     else{
-        if(e1[0] == 't' || e2[0] == 't'){
+        if(e1 == "true" || e2 == "true"){
             return "true";
         }
         else{
@@ -253,12 +223,22 @@ string Leitor_aritmetico :: or_op(const string& e1, const string& op, const stri
     }
 };
 
-string Leitor_aritmetico :: and_op(const string& e1, const string& op, const string& e2){
-    if(isdigit(e1[0]) || isdigit(e2[0])){
+string Leitor_aritmetico :: and_op(const string& e1, const string& e2){
+    bool e1_neg = false;
+    bool e2_neg = false;
+    if(e1[0] == '-' || e2[0] == '-'){
+        if(e1[0] == '-'){
+            e1_neg = true;
+        }
+        if(e2[0] == '-'){
+            e2_neg = true;
+        }
+    }
+    if(e1_neg || e2_neg || isdigit(e1[0]) || isdigit(e2[0])){
         throw Error("error");
     }
     else{
-        if(e1[0] == 't' && e2[0] == 't'){
+        if(e1 == "true" && e2 == "true"){
             return "true";
         }
         else{
@@ -267,8 +247,24 @@ string Leitor_aritmetico :: and_op(const string& e1, const string& op, const str
     }
 };
 
-string Leitor_aritmetico :: eq_op(const string& e1, const string& op, const string& e2){
-    if((isdigit(e1[0]) && !isdigit(e2[0])) || (!isdigit(e1[0]) && isdigit(e2[0]))){
+string Leitor_aritmetico :: eq_op(string& e1, const string& op, string& e2){
+    bool e1_aritmetico = false;
+    bool e1_bool = false;
+    bool e2_aritmetico = false;
+    bool e2_bool = false;
+    if(e1 == "false" || e1 == "true"){
+        e1_bool = true;
+    }
+    else{
+        e1_aritmetico = true;
+    }
+    if(e2 == "true" || e2 == "false"){
+        e2_bool = true;
+    }
+    else{
+        e2_aritmetico = true;
+    }
+    if((e1_aritmetico && e2_bool) || (e1_bool && e2_aritmetico)){
         throw Error("error");
     }
     else{
@@ -292,7 +288,7 @@ string Leitor_aritmetico :: eq_op(const string& e1, const string& op, const stri
 };
 
 string Leitor_aritmetico :: rel_op(const string& e1, const string& op, const string& e2){
-    if(!isdigit(e1[0]) || !isdigit(e2[0])){
+    if((e1 == "true" || e1  == "false") || (e2 == "true" || e2 == "false")){
         throw Error("error");
     }
     else{
@@ -332,7 +328,7 @@ string Leitor_aritmetico :: rel_op(const string& e1, const string& op, const str
 };
 
 string Leitor_aritmetico :: add_op(const string& e1, const string& op, const string& e2){
-    if(!isdigit(e1[0]) || !isdigit(e2[0])){
+    if((e1 == "true" || e1  == "false") || (e2 == "true" || e2 == "false")){
         throw Error("error");
     }
     else{
@@ -352,7 +348,7 @@ string Leitor_aritmetico :: add_op(const string& e1, const string& op, const str
 }
 
 string Leitor_aritmetico :: mul_op(const string& e1, const string& op, const string& e2){
-    if(!isdigit(e1[0]) || !isdigit(e2[0])){
+    if((e1 == "true" || e1  == "false") || (e2 == "true" || e2 == "false")){
         throw Error("error");
     }
     else{
@@ -364,15 +360,20 @@ string Leitor_aritmetico :: mul_op(const string& e1, const string& op, const str
             return resultado;
         }
         else{
-            int div = a / b;
-            string resultado = to_string(div);
-            return resultado;
+            if(b != 0){
+                int div = a / b;
+                string resultado = to_string(div);
+                return resultado;
+            }
+            else{
+                throw Error("error");
+            }
         }
     }
 }
 
-string Leitor_aritmetico :: unary_op(const string& e1, const string& op){
-    if(!isdigit(e1[1])){
+string Leitor_aritmetico :: unary_op(const string& e1){
+    if(e1 == "true" || e1 == "false"){
         throw Error("error");
     }
     else{

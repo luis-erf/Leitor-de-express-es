@@ -1,3 +1,5 @@
+#ifndef __CLASSE__
+#define __CLASSE__ 
 #include <string>
 
 using namespace std;
@@ -56,29 +58,28 @@ class Leitor_aritmetico{
         bool append(string termo);
 
         //Funções do algoritmo recursivo
-        string exp(int current_token_pos, int current_exp_pos);
-        string or_exp(int current_token_pos, int current_exp_pos);
-        string and_exp(int current_token_pos, int current_exp_pos);
-        string eq_exp(int current_token_pos, int current_exp_pos);
-        string rel_exp(int current_token_pos, int current_exp_pos);
-        string add_exp(int current_token_pos, int current_exp_pos);
-        string mul_exp(int current_token_pos, int current_exp_pos);
-        string unary_exp(int current_token_pos, int current_exp_pos);
-        string primary_exp(int current_token_pos, int current_exp_pos);
-        string literal(int current_token_pos, int current_exp_pos);
+        string exp(int current_token_pos);
+        string or_exp();
+        string and_exp();
+        string eq_exp();
+        string rel_exp();
+        string add_exp();
+        string mul_exp();
+        string unary_exp();
+        string primary_exp();
+        string literal();
 
         // Função para analisar o próximo token
         void read_next_token();
 
         // Funções responsáveis por realizar as operações baseadas nos tokens analisados
-        string or_op(const string& e1, const string& op, const string& e2);
-        string and_op(const string& e1, const string& op, const string& e2);
-        string eq_op(const string& e1, const string& op, const string& e2);
+        string or_op(const string& e1, const string& e2);
+        string and_op(const string& e1, const string& e2);
+        string eq_op(string& e1, const string& op, string& e2);
         string rel_op(const string& e1, const string& op, const string& e2);
         string add_op(const string& e1, const string& op, const string& e2);
         string mul_op(const string& e1, const string& op, const string& e2);
-        string unary_op(const string& e1, const string& op);
-        string priamary_op();
+        string unary_op(const string& e1);
 };
 
 class Error{
@@ -89,3 +90,5 @@ class Error{
         Error(const string& base) : exp(base) {}
         const string& output() const {return exp;}
 };
+
+#endif
